@@ -1,0 +1,6 @@
+{
+  "name": "MYDNA Clinical Research Lab",
+  "description": "Sleek, high-fidelity responsive landing page for CancerCure (CC), featuring interactive genetic analytics, timeline navigation, real-time heartrate scanning UI, and a detailed laboratory finder.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

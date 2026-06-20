@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Playfair Display", Georgia, serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-purple: #090F15;
+  --color-brand-cyan: #090F15;
+  --color-editorial-bg: #D3D1CE;
+  --color-editorial-text: #090F15;
+  --color-editorial-warm: #D3D1CE;
+  --color-editorial-border: rgba(9, 15, 21, 0.1);
+}
+
+/* Custom visual polish */
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+  .box-glow {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+  }
+}
+
+/* Scrollbar customizations */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #D3D1CE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #090F15;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #262E36;
+}
+
+/* Custom keyframes for sleek floating / scrolling animations */
+@keyframes infinite-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-scroll {
+  animation: infinite-scroll 65s linear infinite;
+}
+
+.animate-infinite-scroll-reverse {
+  animation: infinite-scroll 65s linear infinite reverse;
+}
+
+/* Pause scroll on hover */
+.hover-pause:hover .animate-infinite-scroll,
+.hover-pause:hover .animate-infinite-scroll-reverse {
+  animation-play-state: paused;
+}
+
+/* Defer to system accessibility choices */
+@media (prefers-reduced-motion: reduce) {
+  .animate-infinite-scroll,
+  .animate-infinite-scroll-reverse {
+    animation-play-state: paused !important;
+  }
+}
+
+/* Glassmorphism utility classes suited for Editorial luxury look */
+.glass {
+  background: rgba(211, 209, 206, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(9, 15, 21, 0.1);
+}
+
+.dark-glass {
+  background: rgba(9, 15, 21, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(211, 209, 206, 0.1);
+}
+
+/* Cinematic slow zoom-in / zoom-out breathe for background videos */
+@keyframes video-zoom-breathe {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-video-zoom-breathe {
+  animation: video-zoom-breathe 20s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-video-zoom-breathe {
+    animation: none !important;
+  }
+}
+
