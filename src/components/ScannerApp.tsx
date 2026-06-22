@@ -4,8 +4,10 @@ import {
   UploadCloud, ChevronLeft, Download,
   RefreshCcw, Activity, ArrowLeftRight
 } from 'lucide-react';
+import { toPng } from 'html-to-image';
+import { jsPDF } from 'jspdf';
 
-// ─── PASTE your ngrok URL here after running Cell 19 ────────────────────────
+// ─── API BASE URL CONFIGURATION ──────────────────────────────────────────────
 const API_BASE = "https://papaig100-melanoma-detection-api.hf.space";
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -108,6 +110,35 @@ export default function ScannerApp({ onBack }: ScannerAppProps) {
   const [result, setResult] = useState<DiagnosticResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const generatePDF = async () => {
+    if (!reportRef.current || isGeneratingPDF) return;
+    try {
+      setIsGeneratingPDF(true);
+      const element = reportRef.current;
+
+      const dataUrl = await toPng(element, { quality: 0.95, pixelRatio: 2 });
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
+
+      pdf.addImage(dataUrl, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
+      pdf.save('CancerCure-Diagnostic-Report.pdf');
+    } catch (err) {
+      console.error('Failed to generate PDF', err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   const loadingMessages = [
     'Extracting Spatial Features...',
@@ -298,6 +329,7 @@ export default function ScannerApp({ onBack }: ScannerAppProps) {
           {scannerState === 'results' && result && (
             <motion.div key="results-state" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }}
               className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto"
+              ref={reportRef}
             >
               {/* Left: XAI Heatmap */}
               <div className="bg-white/60 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[2rem] p-8 flex flex-col items-center justify-center relative overflow-hidden">
@@ -394,9 +426,9 @@ export default function ScannerApp({ onBack }: ScannerAppProps) {
 
                 {/* Action Buttons */}
                 <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="mt-10 flex flex-col sm:flex-row gap-4">
-                  <button className="flex-1 py-3 rounded-full bg-[#1A1A1A] text-white font-mono text-[10px] uppercase font-bold tracking-[0.15em] flex items-center justify-center space-x-2 hover:bg-[#1A1A1A]/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/50 focus:ring-offset-2">
+                  <button onClick={generatePDF} disabled={isGeneratingPDF} className={`flex-1 py-3 rounded-full bg-[#1A1A1A] text-white font-mono text-[10px] uppercase font-bold tracking-[0.15em] flex items-center justify-center space-x-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/50 focus:ring-offset-2 ${isGeneratingPDF ? 'opacity-70 cursor-wait' : 'hover:bg-[#1A1A1A]/90'}`}>
                     <Download className="w-4 h-4 text-white" />
-                    <span>Download PDF Report</span>
+                    <span>{isGeneratingPDF ? 'Generating...' : 'Download PDF Report'}</span>
                   </button>
                   <button onClick={resetScan} className="flex-1 py-3 rounded-full bg-white border border-black/10 text-[#1A1A1A] font-mono text-[10px] uppercase font-bold tracking-[0.15em] flex items-center justify-center space-x-2 hover:bg-black/5 transition-colors focus:outline-none focus:ring-2 focus:ring-black/30 focus:ring-offset-2">
                     <RefreshCcw className="w-4 h-4" />
