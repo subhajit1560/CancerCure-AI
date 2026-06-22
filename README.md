@@ -6,7 +6,7 @@ A high-fidelity, premium medical interface and diagnostic simulation engine for 
 
 ## 🏛️ System Architecture
 
-The following diagram illustrates the workflow and architecture of the CancerCure diagnostic pipeline, from raw dermoscopic input to AI analysis, feature fusion, Gemini generative reasoning, and final visual/auditory outputs:
+The following diagram illustrates the workflow and architecture of the CancerCure diagnostic pipeline, from raw dermoscopic input to AI analysis, feature fusion, backend classification, and final visual/auditory outputs:
 
 ```mermaid
 graph TD
@@ -37,11 +37,11 @@ graph TD
     H --> J;
     I --> J;
 
-    J --> K[Gemini AI Engine Integration / API Server];
+    J --> K[HuggingFace Spaces Backend / Classification API];
     
     subgraph AI_Core ["AI Core & Verification"]
-        K --> L[Gemini-2.0-Flash / GenAI SDK];
-        L --> M[Diagnostic Reasoning Generation];
+        K --> L[Melanoma Detection Model / FastAPI];
+        L --> M[Classification & Confidence Scoring];
     end
 
     M --> N[Diagnostic Outcome & Confidence Model];
@@ -127,7 +127,7 @@ CancerCure/
 │   ├── index.css           # Global custom classes & scrolling animations
 │   ├── main.tsx            # React entrypoint
 │   └── types.ts            # Shared clinical TypeScript interfaces
-├── .env.example            # Environment configurations (Gemini keys, host URL)
+├── .env.example            # Environment configurations (API endpoint, host URL)
 ├── package.json            # Scripts and dependency manifests
 ├── tsconfig.json           # Type configurations
 └── vite.config.ts          # Vite configuration with tailwindcss plugin
@@ -151,9 +151,8 @@ Copy `.env.example` to create a `.env.local` or `.env` file in the root director
 ```bash
 cp .env.example .env.local
 ```
-Fill in the credentials:
-- `GEMINI_API_KEY`: Required for active Gemini AI API integration in production environments.
-- `APP_URL`: The hosting address used for self-referential endpoints.
+Fill in the configuration:
+- `APP_URL`: The hosting address used for self-referential endpoints (e.g., OAuth callbacks, API links).
 
 ### 3. Start Development Server
 Launch the application locally on Vite's default development port:
